@@ -1,27 +1,33 @@
+import { useLanguage } from "../i18n/LanguageContext";
+import { STRINGS } from "../i18n/strings";
+
 export default function Footer() {
+    const { lang } = useLanguage();
+    const t = STRINGS[lang];
+
     return (
         <footer className="footer" id="contact">
             <div className="footer-grid">
                 <div>
-                    <h3>Election Commission of India</h3>
+                    <h3>{t.eciTitle}</h3>
                     <p>
-                        Nirvachan Sadan, Ashoka Road<br />
-                        New Delhi – 110001
+                        {t.address}<br />
+                        {t.city}
                     </p>
                 </div>
 
                 <div>
-                    <h4>Important Links</h4>
+                    <h4>{t.importantLinks}</h4>
                     <ul>
-                        <li><a href="https://www.eci.gov.in/" target="_blank">ECI Website</a></li>
-                        <li><a>Privacy Policy</a></li>
-                        <li><a>Accessibility</a></li>
+                        <li><a href="https://www.eci.gov.in/" target="_blank">{t.eciWebsite}</a></li>
+                        <li><a>{t.privacyPolicy}</a></li>
+                        <li><a>{t.accessibility}</a></li>
                     </ul>
                 </div>
             </div>
 
             <div className="footer-bottom">
-                © 2026 Election Commission of India
+                {t.copyright}
             </div>
         </footer>
     );

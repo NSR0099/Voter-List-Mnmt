@@ -7,9 +7,15 @@ export default function Header() {
     const { lang, setLang } = useLanguage();
     const t = STRINGS[lang];
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isDarkMode, setIsDarkMode] = useState(false);
 
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
     const closeMenu = () => setIsMenuOpen(false);
+
+    const toggleTheme = () => {
+        setIsDarkMode(!isDarkMode);
+        document.body.classList.toggle('dark-mode');
+    };
 
     return (
         <header className="header">
@@ -17,12 +23,12 @@ export default function Header() {
                 <div className="logo-container">
                     <img
                         src="/src/assets/eci-logo.png"
-                        alt="Election Commission of India"
+                        alt={t.siteSubtitle}
                         className="eci-logo"
                     />
                     <div className="logo-text-block">
-                        <h1 className="site-title">Unified Voter System</h1>
-                        <p className="site-subtitle">Election Commission of India</p>
+                        <h1 className="site-title">{t.siteTitle}</h1>
+                        <p className="site-subtitle">{t.siteSubtitle}</p>
                     </div>
                 </div>
 
@@ -62,10 +68,20 @@ export default function Header() {
                             to="/blo-login"
                             className="nav-link login-btn"
                             onClick={closeMenu}
-                            aria-label="Login to BLO Portal"
+                            aria-label={t.bloLogin}
                         >
                             {t.bloLogin}
                         </NavLink>
+                    </li>
+
+                    <li>
+                        <button
+                            className="theme-toggle"
+                            onClick={toggleTheme}
+                            aria-label={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+                        >
+                            <i className={`fas ${isDarkMode ? 'fa-sun' : 'fa-moon'}`}></i>
+                        </button>
                     </li>
 
                     <li className="lang-select-wrapper">

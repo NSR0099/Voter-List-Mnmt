@@ -15,6 +15,7 @@ export default function BLODashboard() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        window.scrollTo(0, 0); // Scroll to top on mount
         const fetchStats = async () => {
             try {
                 const token = localStorage.getItem("token");
@@ -71,7 +72,7 @@ export default function BLODashboard() {
                     </div>
                     <div style={{ display: 'flex', gap: '1rem' }}>
                         <Link to="/blo/audit-logs" className="btn btn-primary">
-                            Audit Logs
+                            {t.auditLogsBtn}
                         </Link>
                         <button className="btn btn-secondary" onClick={logout}>
                             {t.logout}

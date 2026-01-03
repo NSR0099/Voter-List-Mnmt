@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "../i18n/LanguageContext";
 import { useAuth } from "../auth/AuthContext";
@@ -20,9 +20,35 @@ export default function BLOLogin() {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
+    // Focus OTP input when step 2 is active
+    useEffect(() => {
+        if (step === 2) {
+            // Use setTimeout to ensure the alert happens after render
+            setTimeout(() => {
+                alert(`Demo OTP: 1234`);
+                const input = document.getElementById('otp-input-field');
+                if (input) input.focus();
+            }, 50);
+        }
+    }, [step]);
+
     // CAPTCHA State (Client-side simulation)
-    const [captcha] = useState("7K9P");
+    const [captcha, setCaptcha] = useState("");
     const [captchaInput, setCaptchaInput] = useState("");
+
+    // Generate random captcha
+    const generateCaptcha = () => {
+        const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        let result = "";
+        for (let i = 0; i < 6; i++) {
+            result += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        setCaptcha(result);
+    };
+
+    useEffect(() => {
+        generateCaptcha();
+    }, []);
 
     const handleInputChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -33,7 +59,10 @@ export default function BLOLogin() {
         e.preventDefault();
 
         if (captchaInput !== captcha) {
-            setError("Invalid CAPTCHA");
+            setError(t.invalidCaptcha);
+            // Refresh captcha on fail
+            generateCaptcha();
+            setCaptchaInput("");
             return;
         }
 
@@ -51,9 +80,10 @@ export default function BLOLogin() {
                 setTempToken(data.tempToken);
                 setMaskedPhone(data.maskedPhone);
                 setStep(2);
-                alert(`Demo OTP: 1234`); // For hackathon demo purposes
+                // Alert is now handled by useEffect on step change
             } else {
                 setError(data.error || "Login failed");
+                generateCaptcha(); // Refresh on fail
             }
         } catch (err) {
             setError("Server error. Please try again.");
@@ -125,13 +155,24 @@ export default function BLOLogin() {
                         </label>
 
                         <div role="group" aria-label="Captcha Verification">
-                            <strong>{t.captcha}: {captcha}</strong>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                <strong>{captcha}</strong>
+                                <button
+                                    type="button"
+                                    onClick={generateCaptcha}
+                                    className="btn btn-secondary"
+                                    style={{ padding: '0.2rem 0.5rem', fontSize: '0.8rem' }}
+                                    title="Refresh Captcha"
+                                >
+                                    <i className="fas fa-sync-alt"></i>
+                                </button>
+                            </div>
                             <input
                                 value={captchaInput}
                                 onChange={(e) => setCaptchaInput(e.target.value)}
                                 required
                                 aria-label="Enter Captcha"
-                                placeholder="Enter code above"
+                                placeholder={t.captcha}
                                 style={{ marginTop: '0.5rem' }}
                             />
                         </div>
@@ -142,25 +183,30 @@ export default function BLOLogin() {
                     </form>
                 ) : (
                     <form className="login-form" onSubmit={handleStep2}>
-                        <div style={{ textAlign: 'center', marginBottom: '1rem', color: '#0a2a66' }}>
-                            <p>OTP sent to registered mobile ending in <strong>xxxx-xxxx-{maskedPhone}</strong></p>
+                        <div className="otp-message-container">
+                            <p>{t.otpSent}</p>
+                            <div className="phone-display">
+                                <strong>xxxx-xxxx-{maskedPhone}</strong>
+                            </div>
                         </div>
 
-                        <label>
-                            Enter OTP
+                        <label style={{ alignItems: 'center' }}>
+                            {t.enterOtp}
                             <input
+                                id="otp-input-field"
                                 name="otp"
                                 value={formData.otp}
                                 onChange={handleInputChange}
                                 required
                                 maxLength="4"
-                                placeholder="Enter 4-digit OTP"
-                                style={{ textAlign: 'center', letterSpacing: '0.2rem', fontSize: '1.2rem' }}
+                                placeholder="----"
+                                className="otp-input"
+                                autoFocus
                             />
                         </label>
 
                         <button className="btn btn-primary" disabled={loading}>
-                            {loading ? "Verifying..." : "Verify OTP"}
+                            {loading ? "Verifying..." : t.verifyOtp}
                         </button>
 
                         <button
@@ -169,7 +215,7 @@ export default function BLOLogin() {
                             onClick={() => setStep(1)}
                             style={{ marginTop: '0.5rem', border: 'none', fontSize: '0.9rem' }}
                         >
-                            Back to Login
+                            {t.backToLogin}
                         </button>
                     </form>
                 )}
