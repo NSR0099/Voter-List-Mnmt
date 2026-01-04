@@ -4,7 +4,10 @@ import { useLanguage } from "../i18n/LanguageContext";
 import { useAuth } from "../auth/AuthContext";
 import { STRINGS } from "../i18n/strings";
 
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+let BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+if (BASE_URL && !BASE_URL.startsWith('http')) {
+    BASE_URL = `https://${BASE_URL}`;
+}
 const API_URL = `${BASE_URL}/api`;
 
 const CaptchaCanvas = ({ text }) => {
@@ -168,7 +171,8 @@ export default function BLOLogin() {
                 generateCaptcha(); // Refresh on fail
             }
         } catch (err) {
-            setError("Server error. Please try again.");
+            console.error("Login Error:", err);
+            setError(`Server connection failed. Trying to connect to: ${API_URL}`);
         } finally {
             setLoading(false);
         }
@@ -198,7 +202,8 @@ export default function BLOLogin() {
                 setError(data.error || "OTP Verification failed");
             }
         } catch (err) {
-            setError("Server connection failed");
+            console.error("OTP Verify Error:", err);
+            setError(`Server connection failed. Trying to connect to: ${API_URL}`);
         } finally {
             setLoading(false);
         }

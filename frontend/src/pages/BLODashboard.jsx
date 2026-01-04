@@ -4,7 +4,10 @@ import { useAuth } from "../auth/AuthContext";
 import { useLanguage } from "../i18n/LanguageContext";
 import { STRINGS } from "../i18n/strings";
 
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+let BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+if (BASE_URL && !BASE_URL.startsWith('http')) {
+    BASE_URL = `https://${BASE_URL}`;
+}
 const API_URL = `${BASE_URL}/api`;
 
 export default function BLODashboard() {

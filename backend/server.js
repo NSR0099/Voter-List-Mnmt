@@ -21,6 +21,10 @@ if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) {
 app.use(cors());
 app.use(express.json());
 
+// Health Check
+app.get('/', (req, res) => res.json({ status: 'API Running', timestamp: new Date() }));
+app.get('/api', (req, res) => res.json({ status: 'API Running', timestamp: new Date() }));
+
 // ================= ROUTES =================
 
 // 1. Login Step 1: Validate Credentials & Send OTP
