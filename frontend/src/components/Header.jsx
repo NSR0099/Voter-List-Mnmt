@@ -3,6 +3,8 @@ import { NavLink } from "react-router-dom";
 import { useLanguage } from "../i18n/LanguageContext";
 import { STRINGS } from "../i18n/strings";
 
+import eciLogo from "../assets/eci-logo.png";
+
 export default function Header() {
     const { lang, setLang } = useLanguage();
     const t = STRINGS[lang];
@@ -22,7 +24,7 @@ export default function Header() {
             <nav className="navbar">
                 <div className="logo-container">
                     <img
-                        src="../src/assets/eci-logo.png"
+                        src={eciLogo}
                         alt={t.siteSubtitle}
                         className="eci-logo"
                     />
